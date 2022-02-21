@@ -1,0 +1,20 @@
+{
+	"name": "access",
+	"enabled": true,
+	"trigger": {
+		"driven": "timeDriven",
+		"dataDriven": {
+			"tags": {},
+			"events": {}
+		},
+		"timeDriven": {
+			"mode": "boot",
+			"intervalSec": 1,
+			"cronJob": ""
+		}
+	},
+	"expose": {
+		"tags": []
+	},
+	"params": {}
+}
