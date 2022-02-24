@@ -8,6 +8,8 @@ from enum import Enum
 
 import requests
 import requests_unixsocket
+from thingspro.edge.api_v1 import api
+from thingspro.edge.http_v1 import http
 
 
 class TagType(Enum):
@@ -265,3 +267,67 @@ class Subscriber(Token):
                 thread.stop()
                 self._threads.pop(topic, None)
 
+class DirectAccessTagRegister():
+    """
+    example:
+    {
+        "protocolName": "func1_virtual",
+        "domainName": "tpfunc", // it's fixed field. DO NOT CHANGED.
+        "providers": [
+            "func1_virtual"
+        ],
+        "methods" : {
+            "tag-list": "list",
+            "direct-read": "direct-read-tag",
+            "direct-write": "direct-write-tag"
+        }
+    }
+    """
+    def __init__(self, rule_name, provider_name,  taglist_handler=None, read_handler=None, write_handler=None):
+        self.rule_name = rule_name
+        self.taglist_handler = taglist_handler
+        self.read_handler = read_handler
+        self.write_handler = write_handler
+        data = {}
+        data['protocolName'] = rule_name
+        data['domainName'] = "tpfunc"
+        data['providers'] = [provider_name]
+        api_list = {}
+        api_list["tag-list"] = f'{rule_name}/tag-list'
+        api_list["direct-read"] = f'{rule_name}/direct-read-tag'
+        api_list["direct-write"] = f'{rule_name}/direct-write-tag'
+        data['methods'] = api_list
+        self.registerationJson = json.dumps(data)
+
+    def get_taglist_endpoint(self):
+        return f'{self.rule_name}/tag-list'
+
+    def get_direct_read_endpoint(self):
+        return f'{self.rule_name}/direct-read-tag'
+
+    def get_direct_write_endpoint(self):
+        return f'{self.rule_name}/direct-write-tag'
+
+    def register(self):
+        reg_api = api.TPEApiWrapper("post", "tags/prtcl/update")
+        r = reg_api.Request(self.registerationJson)
+        if r.status_code == 200:
+            if self.taglist_handler is not None:
+                http.Server.GET(f'/{self.rule_name}/tag-list', self.taglist_handler)
+            if self.read_handler is not None:
+                http.Server.PUT(f'/{self.rule_name}/direct-read-tag',  self.read_handler)
+            if self.write_handler is not None:
+                http.Server.PUT(f'/{self.rule_name}/direct-write-tag',  self.write_handler)
+            print('direct access tag register succeed. you can use direct access tag api now!')
+        else:
+            print('direct access tag register fail.')
+        return r
+
+    def unregister(self):
+        reg_api = api.TPEApiWrapper("delete", "tags/prtcl/update")
+        r = reg_api.Request(self.registerationJson)
+        if r.status_code == 200:
+            print('direct access tag unregister succeed.')
+        else:
+            print('direct access tag unregister fail.')
+        return r

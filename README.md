@@ -429,3 +429,91 @@ if __name__ == "__main__":
 
 ```
 
+
+### Type 4: Create your own virtual tags
+
+
+User can self-defined virtual tags in function rule program, and these tags will be auto-generated into Thingspro Edge Tag Service. Thus, we're able to operate these virtual tags by `Taghub` api. e.g. `tags/list`.
+Additionally, function progrom SDK also provide simple way let programer to register direct access method of the defined virtual tags. Follow below steps, user can use `tags/access/${ProviderName}/${SourceName}/${TagName}`
+to access registered callback function to do read or write operation.
+
+First, we define this function is triggered by boot time.
+- **package.json**
+```json
+{
+	"name": "vtag_access_func1",
+	"enabled": true,
+	"trigger": {
+		"driven": "timeDriven",
+		"dataDriven": {
+			"tags": {},
+			"events": {}
+		},
+		"timeDriven": {
+			"mode": "boot",
+			"cronJob": ""
+		}
+	},
+	"expose": {
+		"tags": [
+		  {
+			"prvdName": "vtag_access_func1",
+			"srcName": "cpu",
+			"tagName": "onchange",
+			"dataType": "double",
+			"access": "rw"
+		  }
+		]
+	},
+	"params": {}
+}
+```
+Then, we look into `index.py`. Direct Access Tag Register API need rule name, provider name, and your defined callback handler. Remember to do `unregister()` before your python program exit.
+
+- **index.py**
+```python
+#!/usr/local/bin/python3
+# -*- coding: utf-8 -*-
+import json
+import signal
+import sys
+import time
+
+from thingspro.edge.api_v1 import api
+from thingspro.edge.http_v1 import http
+from thingspro.edge.tag_v1 import tag
+
+
+def signal_handler(sig, frame):
+    print('function rule exit, unregister direct access tag callback')
+    global direct_access_register
+    direct_access_register.unregister()
+    sys.exit(0)
+
+def read_tag(resource, headers, message):
+    data={"message": "Implement direct read virtual tag here!"}
+    return http.Response(code=200, data=data)
+
+
+def write_tag(resource, headers, message):
+    data={"message": "Implement direct write virtual tag here!"}
+    return http.Response(code=200, data=data)
+
+def tag_list(resource, headers, message):
+    data={"message": "Implement self virtual tag list here!"}
+    return http.Response(code=200, data=data)
+
+if __name__ == "__main__":
+
+    direct_access_register = tag.DirectAccessTagRegister("vtag_access_func1", "vtag_access_func1", taglist_handler=tag_list, read_handler=read_tag, write_handler=write_tag)
+    direct_access_register.register()
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    # infinite loop
+    while True:
+        time.sleep(1)
+
+```
+
