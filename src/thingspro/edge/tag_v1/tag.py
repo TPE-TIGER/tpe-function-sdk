@@ -283,9 +283,8 @@ class DirectAccessTagRegister():
         }
     }
     """
-    def __init__(self, rule_name, provider_name,  taglist_handler=None, read_handler=None, write_handler=None):
+    def __init__(self, rule_name, provider_name, read_handler=None, write_handler=None):
         self.rule_name = rule_name
-        self.taglist_handler = taglist_handler
         self.read_handler = read_handler
         self.write_handler = write_handler
         data = {}
@@ -293,7 +292,6 @@ class DirectAccessTagRegister():
         data['domainName'] = "tpfunc"
         data['providers'] = [provider_name]
         api_list = {}
-        api_list["tag-list"] = f'{rule_name}/tag-list'
         api_list["direct-read"] = f'{rule_name}/direct-read-tag'
         api_list["direct-write"] = f'{rule_name}/direct-write-tag'
         data['methods'] = api_list
@@ -312,8 +310,6 @@ class DirectAccessTagRegister():
         reg_api = api.TPEApiWrapper("post", "tags/prtcl/update")
         r = reg_api.Request(self.registerationJson)
         if r.status_code == 200:
-            if self.taglist_handler is not None:
-                http.Server.GET(f'/{self.rule_name}/tag-list', self.taglist_handler)
             if self.read_handler is not None:
                 http.Server.PUT(f'/{self.rule_name}/direct-read-tag',  self.read_handler)
             if self.write_handler is not None:
