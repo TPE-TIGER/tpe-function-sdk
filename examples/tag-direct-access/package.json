@@ -1,5 +1,5 @@
 {
-	"name": "http",
+	"name": "vtag_access_func1",
 	"enabled": true,
 	"trigger": {
 		"driven": "timeDriven",
@@ -13,7 +13,15 @@
 		}
 	},
 	"expose": {
-		"tags": []
+		"tags": [
+		  {
+			"prvdName": "vtag_access_func1",
+			"srcName": "cpu",
+			"tagName": "onchange",
+			"dataType": "double",
+			"access": "rw"
+		  }
+		]
 	},
 	"params": {}
 }

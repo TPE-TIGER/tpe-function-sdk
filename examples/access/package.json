@@ -9,7 +9,6 @@
 		},
 		"timeDriven": {
 			"mode": "boot",
-			"intervalSec": 1,
 			"cronJob": ""
 		}
 	},
