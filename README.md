@@ -243,6 +243,8 @@ def YOUR_DATA_CALLBACK(_type, data):
 
 ```
 
+ThingsPro Edge supports more than 60+ events, refer to <a href="https://github.com/TPE-TIGER/TPE2-Technical-Document/blob/main/documents/TPE2-EventList.md">the link</a> for detail.
+
 ### Type 2. HTTP Server
 Some use cases will require accessing the function via an HTTP(s) request. By ThingsPro Edge Function, you can invoke those APIs with an HTTP request using the POST, PUT, GET and DELETE without implement a server, even a ThingsPro application. First, init a function with `tpfunc init http --trigger-http`. Since the API function doesn't have to start repeatly or restart refrequently, `package.json` has been configured as boot mode.
 
