@@ -54,6 +54,8 @@ root@Moxa:/home/moxa# tpfunc init demo
 > `@expose-tags`: the **virtual tags** are about to expose\
 > `@params`: **pre-defined parameters** that can be read in your function code
 
+> The value of "trigger/timeDriven/cronJob"(string) follows the standard cron schedule expressions, please refer to https://crontab.guru/
+
 
 To facility developers, the `init` command comes with three options, `--trigger-time`, `--trigger-data`, `--trigger-http`. `--trigger-time` is used by default in ThingsPro Edge Function.
 
