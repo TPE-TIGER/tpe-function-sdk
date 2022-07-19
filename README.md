@@ -207,7 +207,7 @@ After tag and event are added to the configuration. Looking to `index.py`, you s
 ThingsPro Edge Function data driven function template
 """
 
-# Function name YOUR_DATA_CALLBACK must match your tpfunc name. Please avoid using names that are against python's rule for function names, such as keyword or operators.
+# When using the data-driven pattern, the callback function name YOUR_DATA_CALLBACK must match your tpfunc name. Please avoid using names that are against python's rule of function names, such as reserved keywords or operators.
 def YOUR_DATA_CALLBACK(_type, data):
     """Two types of data will be passed into
         your callback funciton - [tag, event].
