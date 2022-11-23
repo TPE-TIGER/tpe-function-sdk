@@ -273,7 +273,7 @@ This example display a dummy Get method `world/hello` always return `Hello World
     }
   },
   "expose": {
-    "tags": {}
+    "tags": []
   },
   "params": {}
 }
