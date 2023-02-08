@@ -382,6 +382,8 @@ If you already had cloud connectivity in ThingsPro Edge, such as **Sparkplug**, 
 
 Although we already have subscribed tag, sometimes user prefer on-demand access read or write tag directly. To get the tag without subcription routine, Access pattern is also available in ThingsPro Edge function. In this example, we are going to directly read and write tag.
 
+Note: Direct access doesn't support system tag.
+
 First, we define this function is triggered by boot time.
 - **package.json**
 ```json
