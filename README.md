@@ -1,4 +1,19 @@
 # ThingsPro Edge Function
+## Table of Contents
+1. [Introduce](#1-introduce)
+2. [Get Started](#2-get-started)
+3. [Create your function](#3-create-your-function)
+4. [Deploy your function](#4-deploy-your-function)
+5. [Debug functions](#5-debug-functions)
+6. [Types of function](#6-types-of-function)
+   - [Type 1. HTTP Server](#type-1-http-server)
+   - [Type 2. PubSub tags](#type-2-pubsub-tags)
+   - [Type 3: Direct access tag](#type-3-direct-access-tag)
+   - [Type 4: Create your own virtual tags](#type-4-create-your-own-virtual-tags)
+7. [Preview: functions with Data-Driven and Interval Time-Driven Triggers](#preview-functions-with-data-driven-and-interval-time-driven-triggers)
+   - [Type 5: Detect events/tags and respond](#type-5-detect-eventstags-and-respond)
+
+
 ## 1. Introduce
 In ThingsPro Edge, function application provides an easy way to wire togegther your code and the data. Set up the triggers from tags or events and the virtual tags for other applications to re-use easily. No provision and server management are required. Meanwhile, plenties of built-in python library allows you to implement the logic with spectacular ThingsPro features.
 ## 2. Get Started
@@ -26,13 +41,13 @@ root@Moxa:/home/moxa# tpfunc init demo
   "name": "demo",
   "enabled": true,
   "trigger": {
-    "driven": "timeDriven",         // ["dataDriven", "timeDriven"]
+    "driven": "timeDriven",         // ["timeDriven"]
     "dataDriven": {
       "tags": {},
       "events": {}
     },
     "timeDriven": {
-      "mode": "boot",               // ["boot", "interval", "cronJob"]
+      "mode": "boot",               // ["boot", "cronJob"]
       "intervalSec": 1,
       "cronJob": ""
     }
@@ -48,9 +63,8 @@ root@Moxa:/home/moxa# tpfunc init demo
 
 > `@name`: function name (should be unique)\
 > `@enabled`: start/stop function\
-> `@trigger-driven`: the timing starting your function by **dataDriven** or **timeDriven**\
-> `@dataDriven`: function starts with **selected tags** **and events**\
-> `@timeDriven`: function starts with **boot time** / **interval delay time** / **cron job datetime**\
+> `@trigger-driven`: the timing starting your function by **timeDriven**\
+> `@timeDriven`: function starts with **boot time** / **cron job datetime**\
 > `@expose-tags`: the **virtual tags** are about to expose\
 > `@params`: **pre-defined parameters** that can be read in your function code
 
@@ -88,6 +102,8 @@ if __name__ == "__main__":
     while True:
         time.sleep(1)
 ```
+
+
 ## 4. Deploy your function
 Now your first function has been created, then we can move on to how to deploy it. According to `tpfunc` usages. There are several related commands for deployment operation. 
 ```bash
@@ -161,94 +177,9 @@ root@Moxa:/home/moxa# tpfunc log demo
 ```
 
 ## 6. Types of function
-### Type 1. Detect events/tags and respond
-Once you create the function with `--trigger-data`, you can add those tags and events that you want to detect and respond. This example will listen to a tag `/system/status/cpuUsage` and a event `system/app stop`.
 
-```json
-{
-    "name":"demo",
-    "enabled":true,
-    "trigger":{
-        "driven":"dataDriven",
-        "dataDriven":{
-            "tags":{
-                "system": {
-                    "status": [
-                        "cpuUsage"
-                    ]
-                }
-            },
-            "events":{
-                "system": [
-                    "app stop"
-                ]
-            }
-        },
-        "timeDriven":{
-            "mode":"boot",
-            "intervalSec":1,
-            "cronJob":""
-        }
-    },
-    "expose":{},
-    "executable": {
-        "language": "python"
-    },
-    "params":{}
-}
-```
 
-After tag and event are added to the configuration. Looking to `index.py`, you should see the below template has been created. As shown, you can tell the incoming data is tag or event by the parameter `_type`. To be friendly, the structure of event and tag are attached in the comment session in advanced. Reminder, this example doesn't complete the code, so before the deployment, you have to fill the rest of the data callback function otherwise you will get yourself the error messages for python syntax error.
-
-```python
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-"""
-ThingsPro Edge Function data driven function template
-"""
-
-# When using the data-driven pattern, the callback function name YOUR_DATA_CALLBACK must match your tpfunc name. Please avoid using names that are against python's rule of function names, such as reserved keywords or operators.
-def YOUR_DATA_CALLBACK(_type, data):
-    """Two types of data will be passed into
-        your callback funciton - [tag, event].
-        You can tell each other by the _type flag.
-
-    :param tag: A dict mapping keys to the corresponding structure of tag.
-                example:
-                {
-                'prvdName': 'modbus_tcp_master',
-                'srcName': 'ioLogik',
-                'tagName': 'di0',
-                'dataType': 'uint16',
-                'dataValue' 1,
-                'ts': 1607502127595406
-                }
-
-    :param event: A dict mapping keys to the corresponding structure of event.
-                example:
-                {
-                'createdAt': '2020-12-09T17:44:01.271483145+08:00',
-                'event': 'app start',
-                'category': 'system',
-                'user': '',
-                'userOrigin': '',
-                'id': 0,
-                'message': 'Application started: Modbus Master',
-                'severity': 'info',
-                'origin': 'system'
-                }
-    """
-    if _type == 'tag':
-        # TODO: tag handler
-
-    elif _type == 'event':
-        # TODO: event handler
-
-```
-
-ThingsPro Edge supports more than 60+ events, refer to <a href="https://github.com/TPE-TIGER/TPE2-Technical-Document/blob/main/documents/TPE2-EventList.md">the link</a> for detail.
-
-### Type 2. HTTP Server
+### Type 1. HTTP Server
 Some use cases will require accessing the function via an HTTP(s) request. By ThingsPro Edge Function, you can invoke those APIs with an HTTP request using the POST, PUT, GET and DELETE without implement a server, even a ThingsPro application. First, init a function with `tpfunc init http --trigger-http`. Since the API function doesn't have to start repeatly or restart refrequently, `package.json` has been configured as boot mode.
 
 > * Concurrent requests in a RESTful API is not handled.
@@ -300,7 +231,7 @@ if __name__ == "__main__":
         time.sleep(1)
 ```
 
-### Type 3. PubSub tags
+### Type 2. PubSub tags
 
 Although we already have provide data trigger callback function, sometimes user prefer handle the function lifecycle on their own. To get the tag without data callback, PubSub pattern is also available in ThingsPro Edge function. In this example, we are going to subscribe a few of tags and scaling the value, then publish them to become a new virtual tag.
 
@@ -378,7 +309,7 @@ if __name__ == "__main__":
 #### Where can find the new virtual tag?
 If you already had cloud connectivity in ThingsPro Edge, such as **Sparkplug**, **Azure IoT Edge/Device**, even **generic MQTT**.Now you can open the tag select page, the virtual tag should be listed under the provider name you defined in package.json.
 
-### Type 4: Direct access tag
+### Type 3: Direct access tag
 
 Although we already have subscribed tag, sometimes user prefer on-demand access read or write tag directly. To get the tag without subcription routine, Access pattern is also available in ThingsPro Edge function. In this example, we are going to directly read and write tag.
 
@@ -437,7 +368,7 @@ if __name__ == "__main__":
 ```
 
 
-### Type 5: Create your own virtual tags
+### Type 4: Create your own virtual tags
 
 
 User can self-defined virtual tags in function rule program, and these tags will be auto-generated into Thingspro Edge Tag Service. Thus, we're able to operate these virtual tags by `Taghub` api. e.g. `tags/list`.
@@ -563,3 +494,125 @@ if __name__ == "__main__":
         time.sleep(5)
 
 ```
+
+## Preview: functions with Data-Driven and Interval Time-Driven Triggers
+
+There are some preview trigger modes, such as those activated by data-driven events or internal timing. These modes can be utilized during development or testing.
+
+
+- **package.json**
+```json
+{
+  "name": "demo",
+  "enabled": true,
+  "trigger": {
+    "driven": "dataDriven",         // ["dataDriven", "timeDriven"]
+    "dataDriven": {
+      "tags": {},
+      "events": {}
+    },
+    "timeDriven": {
+      "mode": "interval",               // ["boot", "interval", "cronJob"]
+      "intervalSec": 1,
+      "cronJob": ""
+    }
+  },
+  "expose": {
+    "tags": []
+  },
+  "params": {
+		"version": "1.0"
+	}
+}
+```
+> `@trigger-driven`:  the timing starting your function, support with **dataDriven** or **timeDriven**\
+> `@dataDriven`: function starts with **selected tags** **and events**\
+> `@timeDriven`: function starts with **boot time** / **interval delay time** / **cron job datetime**\
+>`@timeDriven-intervalSec`: delay in seconds unde  **interval delay time** mode
+
+### Type 5: Detect events/tags and respond
+Once you create the function with `--trigger-data`, you can add those tags and events that you want to detect and respond. This example will listen to a tag `/system/status/cpuUsage` and a event `system/app stop`.
+
+```json
+{
+    "name":"demo",
+    "enabled":true,
+    "trigger":{
+        "driven":"dataDriven",
+        "dataDriven":{
+            "tags":{
+                "system": {
+                    "status": [
+                        "cpuUsage"
+                    ]
+                }
+            },
+            "events":{
+                "system": [
+                    "app stop"
+                ]
+            }
+        },
+        "timeDriven":{
+            "mode":"boot",
+            "intervalSec":1,
+            "cronJob":""
+        }
+    },
+    "expose":{},
+    "executable": {
+        "language": "python"
+    },
+    "params":{}
+}
+```
+
+After tag and event are added to the configuration. Looking to `index.py`, you should see the below template has been created. As shown, you can tell the incoming data is tag or event by the parameter `_type`. To be friendly, the structure of event and tag are attached in the comment session in advanced. Reminder, this example doesn't complete the code, so before the deployment, you have to fill the rest of the data callback function otherwise you will get yourself the error messages for python syntax error.
+
+```python
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+"""
+ThingsPro Edge Function data driven function template
+"""
+
+# When using the data-driven pattern, the callback function name YOUR_DATA_CALLBACK must match your tpfunc name. Please avoid using names that are against python's rule of function names, such as reserved keywords or operators.
+def YOUR_DATA_CALLBACK(_type, data):
+    """Two types of data will be passed into
+        your callback funciton - [tag, event].
+        You can tell each other by the _type flag.
+
+    :param tag: A dict mapping keys to the corresponding structure of tag.
+                example:
+                {
+                'prvdName': 'modbus_tcp_master',
+                'srcName': 'ioLogik',
+                'tagName': 'di0',
+                'dataType': 'uint16',
+                'dataValue' 1,
+                'ts': 1607502127595406
+                }
+
+    :param event: A dict mapping keys to the corresponding structure of event.
+                example:
+                {
+                'createdAt': '2020-12-09T17:44:01.271483145+08:00',
+                'event': 'app start',
+                'category': 'system',
+                'user': '',
+                'userOrigin': '',
+                'id': 0,
+                'message': 'Application started: Modbus Master',
+                'severity': 'info',
+                'origin': 'system'
+                }
+    """
+    if _type == 'tag':
+        # TODO: tag handler
+
+    elif _type == 'event':
+        # TODO: event handler
+
+```
+
+ThingsPro Edge supports more than 60+ events, refer to <a href="https://github.com/TPE-TIGER/TPE2-Technical-Document/blob/main/documents/TPE2-EventList.md">the link</a> for detail.
