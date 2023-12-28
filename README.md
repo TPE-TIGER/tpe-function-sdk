@@ -1,4 +1,25 @@
 # ThingsPro Edge Function
+## Table of Contents
+- [ThingsPro Edge Function](#thingspro-edge-function)
+  - [Table of Contents](#table-of-contents)
+  - [1. Introduce](#1-introduce)
+  - [2. Get Started](#2-get-started)
+  - [3. Create your function](#3-create-your-function)
+  - [4. Deploy your function](#4-deploy-your-function)
+    - [Add function:](#add-function)
+    - [List function:](#list-function)
+    - [Delete function:](#delete-function)
+    - [Start/Stop function:](#startstop-function)
+  - [5. Debug functions](#5-debug-functions)
+  - [6. Types of function](#6-types-of-function)
+    - [Type 1. Detect events/tags and respond](#type-1-detect-eventstags-and-respond)
+    - [Type 2. HTTP Server](#type-2-http-server)
+    - [Type 3. PubSub tags](#type-3-pubsub-tags)
+      - [Where can find the new virtual tag?](#where-can-find-the-new-virtual-tag)
+    - [Type 4: Direct access tag](#type-4-direct-access-tag)
+    - [Type 5: Create your own virtual tags](#type-5-create-your-own-virtual-tags)
+
+
 ## 1. Introduce
 In ThingsPro Edge, function application provides an easy way to wire togegther your code and the data. Set up the triggers from tags or events and the virtual tags for other applications to re-use easily. No provision and server management are required. Meanwhile, plenties of built-in python library allows you to implement the logic with spectacular ThingsPro features.
 ## 2. Get Started
@@ -354,7 +375,7 @@ def scale_value(val, factor, offset):
     else:
         return scale
 
-def callback(_type, data={}):
+def callback(data={}):
     global publisher
     data['dataValue'] = scale_value(data['dataValue'], 1000, 31268)
     if data['tagName'] == 'tag1':
