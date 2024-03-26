@@ -285,7 +285,7 @@ def scale_value(val, factor, offset):
     else:
         return scale
 
-def callback(_type, data={}):
+def callback(data={}):
     global publisher
     data['dataValue'] = scale_value(data['dataValue'], 1000, 31268)
     if data['tagName'] == 'tag1':

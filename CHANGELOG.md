@@ -1,5 +1,12 @@
 # Change Log
 
+## Dec 28, 2023
+
+### Fixed
+
+- Corrected the missing _type parameter issue in the Data-Driven callback function.
+- Updated the PubSub tags sample code to remove the redundant _type parameter.
+
 ## Dec 9, 2023
 
 ### Added
