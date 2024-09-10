@@ -26,6 +26,12 @@ To be sure your functions can run properly. Please check the unit has installed 
 - Since the function runtime is built on **Python 3.5**, you can also refer to [Python official library](https://docs.python.org/3.5/library/index.html) for your implementation.
 ## 3. Create your function
 It is usually confusing users with how to create their first function project. Therefore we provide a built-in utility `tpfunc` which can help you start with a template `index.py` and `pacakge.json`.
+
+Notice: The `tpfunc` require root access to run. Currently, we do not support running these functions with 
+```bash
+User@moxa: sudo tpfunc
+```
+- **bash example**
 ```bash
 root@Moxa:/home/moxa# tpfunc init demo
 ```
@@ -65,7 +71,10 @@ root@Moxa:/home/moxa# tpfunc init demo
 > `@enabled`: start/stop function\
 > `@trigger-driven`: the timing starting your function by **timeDriven**\
 > `@timeDriven`: function starts with **boot time** / **cron job datetime**\
-> `@expose-tags`: the **virtual tags** are about to expose\
+> `@expose-tags`: the **virtual tags** are about to expose 
+> (The section expose is for developer who don't want to create virtual tags
+manually. Any virtual tags defined in the expose section will be created following the
+function lifecycle.)\
 > `@params`: **pre-defined parameters** that can be read in your function code
 
 > The value of "trigger/timeDriven/cronJob"(string) follows the standard cron schedule expressions, please refer to https://crontab.guru/
@@ -138,7 +147,7 @@ root@Moxa:/home/moxa# tpfunc ls
 
 ```bash
 Usage:
-  tpfunc ls [flags]
+  to ls [flags]
 
 Flags:
   -a, --all           show all configuration
@@ -150,7 +159,7 @@ Flags:
 A delete command to remove the target function.
 ```bash
 root@Moxa:/home/moxa# tpfunc del demo
-root@Moxa:/home/moxa# tpfunc ls
+root@Moxa:/home/moxa# sudo ls
 +------------+--------+------+---------------------------+----------+-------------------------+
 |    NAME    | ENABLE | MODE |        LASTUPTIME         |  STATE   |          ERROR          |
 +------------+--------+------+---------------------------+----------+-------------------------+
@@ -169,7 +178,7 @@ Usage:
 ## 5. Debug functions
 During the development and deployment, there always needs a way to the debug.
 In ThingsPro Edge Function, a real-time logging channel setup by default when each funciton starts.
-As long as user hit the log command `tpfunc log {function_name}`,
+As long as user hit the log command `to log {function_name}`,
 the streaming `stdout` and `stderr` will be printed on screen by time sequence.
 ```bash
 root@Moxa:/home/moxa# tpfunc log demo
