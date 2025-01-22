@@ -1,17 +1,24 @@
 # ThingsPro Edge Function
 ## Table of Contents
-1. [Introduce](#1-introduce)
-2. [Get Started](#2-get-started)
-3. [Create your function](#3-create-your-function)
-4. [Deploy your function](#4-deploy-your-function)
-5. [Debug functions](#5-debug-functions)
-6. [Types of function](#6-types-of-function)
-   - [Type 1. HTTP Server](#type-1-http-server)
-   - [Type 2. PubSub tags](#type-2-pubsub-tags)
-   - [Type 3: Direct access tag](#type-3-direct-access-tag)
-   - [Type 4: Create your own virtual tags](#type-4-create-your-own-virtual-tags)
-7. [Preview: functions with Data-Driven and Interval Time-Driven Triggers](#preview-functions-with-data-driven-and-interval-time-driven-triggers)
-   - [Type 5: Detect events/tags and respond](#type-5-detect-eventstags-and-respond)
+- [ThingsPro Edge Function](#thingspro-edge-function)
+  - [Table of Contents](#table-of-contents)
+  - [1. Introduce](#1-introduce)
+  - [2. Get Started](#2-get-started)
+  - [3. Create your function](#3-create-your-function)
+  - [4. Deploy your function](#4-deploy-your-function)
+    - [Add function:](#add-function)
+    - [List function:](#list-function)
+    - [Delete function:](#delete-function)
+    - [Start/Stop function:](#startstop-function)
+  - [5. Debug functions](#5-debug-functions)
+  - [6. Types of function](#6-types-of-function)
+    - [Type 1. HTTP Server](#type-1-http-server)
+    - [Type 2. PubSub tags](#type-2-pubsub-tags)
+      - [Where can find the new virtual tag?](#where-can-find-the-new-virtual-tag)
+    - [Type 3: Direct access tag](#type-3-direct-access-tag)
+    - [Type 4: Create your own virtual tags](#type-4-create-your-own-virtual-tags)
+  - [7. Preview: functions with Data-Driven and Interval Time-Driven Triggers](#7-preview-functions-with-data-driven-and-interval-time-driven-triggers)
+    - [Type 5: Detect events/tags and respond](#type-5-detect-eventstags-and-respond)
 
 
 ## 1. Introduce
@@ -27,10 +34,11 @@ To be sure your functions can run properly. Please check the unit has installed 
 ## 3. Create your function
 It is usually confusing users with how to create their first function project. Therefore we provide a built-in utility `tpfunc` which can help you start with a template `index.py` and `pacakge.json`.
 
-Notice: The `tpfunc` require root access to run. Currently, we do not support running these functions with 
-```bash
-User@moxa: sudo tpfunc
-```
+> Notice: The `tpfunc` require root access to run. Currently, we do not support running these functions with `sudo`.For example, the following command will not work:
+>```bash
+>User@moxa:~$ sudo tpfunc ls
+>```
+
 - **bash example**
 ```bash
 root@Moxa:/home/moxa# tpfunc init demo
@@ -71,10 +79,10 @@ root@Moxa:/home/moxa# tpfunc init demo
 > `@enabled`: start/stop function\
 > `@trigger-driven`: the timing starting your function by **timeDriven**\
 > `@timeDriven`: function starts with **boot time** / **cron job datetime**\
-> `@expose-tags`: the **virtual tags** are about to expose 
-> (The section expose is for developer who don't want to create virtual tags
+> `@expose-tags`: the **virtual tags** are about to expose.
+> The section expose is for developer who don't want to create virtual tags
 manually. Any virtual tags defined in the expose section will be created following the
-function lifecycle.)\
+function lifecycle.\
 > `@params`: **pre-defined parameters** that can be read in your function code
 
 > The value of "trigger/timeDriven/cronJob"(string) follows the standard cron schedule expressions, please refer to https://crontab.guru/
@@ -147,7 +155,7 @@ root@Moxa:/home/moxa# tpfunc ls
 
 ```bash
 Usage:
-  to ls [flags]
+  tpfunc ls [flags]
 
 Flags:
   -a, --all           show all configuration
@@ -159,7 +167,7 @@ Flags:
 A delete command to remove the target function.
 ```bash
 root@Moxa:/home/moxa# tpfunc del demo
-root@Moxa:/home/moxa# sudo ls
+root@Moxa:/home/moxa# tpfunc ls
 +------------+--------+------+---------------------------+----------+-------------------------+
 |    NAME    | ENABLE | MODE |        LASTUPTIME         |  STATE   |          ERROR          |
 +------------+--------+------+---------------------------+----------+-------------------------+
@@ -178,7 +186,7 @@ Usage:
 ## 5. Debug functions
 During the development and deployment, there always needs a way to the debug.
 In ThingsPro Edge Function, a real-time logging channel setup by default when each funciton starts.
-As long as user hit the log command `to log {function_name}`,
+As long as user hit the log command `tpfunc log {function_name}`,
 the streaming `stdout` and `stderr` will be printed on screen by time sequence.
 ```bash
 root@Moxa:/home/moxa# tpfunc log demo
@@ -504,7 +512,7 @@ if __name__ == "__main__":
 
 ```
 
-## Preview: functions with Data-Driven and Interval Time-Driven Triggers
+## 7. Preview: functions with Data-Driven and Interval Time-Driven Triggers
 
 There are some preview trigger modes, such as those activated by data-driven events or internal timing. These modes can be utilized during development or testing.
 
